@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ড্যাশবোর্ড - Kali Life</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <header>
+        <h1>Kali Life - User Dashboard</h1>
+        <nav>
+            <a href="index.html" style="color: white; text-decoration: none; margin-left: 15px;">হোম</a>
+            <a href="products.html" style="color: white; text-decoration: none; margin-left: 15px;">প্রোডাক্টস</a>
+            <button id="logoutBtn" class="btn" style="background-color: #e74c3c; padding: 0.3rem 0.8rem; margin-left: 15px; font-size: 0.9rem;">লগআউট</button>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <h2>স্বাগতম আপনার ড্যাশবোর্ডে!</h2>
+            <p>এখানে আপনি আপনার অ্যাকাউন্ট এবং অর্গানিক ফার্মিং প্রজেক্টের বিভিন্ন আপডেট দেখতে পাবেন।</p>
+            <div id="userInfo" style="margin-top: 1rem; font-weight: bold; color: #27ae60;"></div>
+        </div>
+    </div>
+
+    <!-- ফায়ারবেজ ও সেশন চেক স্ক্রিপ্ট -->
+    <script type="module">
+        import { checkAuth, logoutUser } from './js/auth.js';
+        
+        // লগইন করা আছে কিনা চেক করা এবং ইমেইল দেখানো
+        checkAuth((user) => {
+            document.getElementById('userInfo').innerText = "লগইন করা ইমেইল: " + user.email;
+        });
+
+        // লগআউট বাটন হ্যান্ডেল করা
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            logoutUser();
+        });
+    </script>
+
+</body>
+</html>
