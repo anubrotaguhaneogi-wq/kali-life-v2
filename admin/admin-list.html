@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>অ্যাডমিন তালিকা - Kali Life</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+    <header>
+        <h1>Kali Life - Admin Panel</h1>
+        <nav>
+            <a href="admin-dashboard.html" style="color: white; text-decoration: none; margin-left: 15px;">ড্যাশবোর্ড</a>
+            <a href="create-admin.html" style="color: white; text-decoration: none; margin-left: 15px;">নতুন অ্যাডমিন</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <h2>রেজিস্ট্রিকৃত অ্যাডমিনগণের তালিকা</h2>
+            <p>সিস্টেমে থাকা সমস্ত অ্যাডমিন অ্যাকাউন্টের বিবরণ নিচে দেখানো হলো।</p>
+            
+            <div style="margin-top: 1.5rem;">
+                <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                    <thead>
+                        <tr style="background-color: #f4f7f6; border-bottom: 2px solid #ccc;">
+                            <th style="padding: 10px;">ইমেইল</th>
+                            <th style="padding: 10px;">রোল</th>
+                            <th style="padding: 10px;">স্ট্যাটাস</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminTableBody">
+                        <tr style="border-bottom: 1px solid #eee;">
+                            <td style="padding: 10px;">admin@kalilife.com</td>
+                            <td style="padding: 10px;">Super Admin</td>
+                            <td style="padding: 10px; color: #27ae60;">Active</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
