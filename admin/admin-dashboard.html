@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>অ্যাডমিন ড্যাশবোর্ড - Kali Life</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+    <header>
+        <h1>Kali Life - Admin Panel</h1>
+        <nav>
+            <a href="../index.html" style="color: white; text-decoration: none; margin-left: 15px;">হোম</a>
+            <a href="admin-list.html" style="color: white; text-decoration: none; margin-left: 15px;">অ্যাডমিন তালিকা</a>
+            <a href="create-admin.html" style="color: white; text-decoration: none; margin-left: 15px;">নতুন অ্যাডমিন</a>
+            <button id="logoutBtn" class="btn" style="background-color: #e74c3c; padding: 0.3rem 0.8rem; margin-left: 15px; font-size: 0.9rem;">লগআউট</button>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <h2>অ্যাডমিন কন্ট্রোল প্যানেল</h2>
+            <p>স্বাগতম! এখান থেকে আপনি পুরো সিস্টেমটি পরিচালনা করতে পারবেন।</p>
+            <div id="adminInfo" style="margin-top: 1rem; font-weight: bold; color: #2c3e50;"></div>
+        </div>
+    </div>
+
+    <!-- ফায়ারবেজ ও সেশন চেক স্ক্রিপ্ট (রুট ফোল্ডার থেকে ফাইল লোড করার পাথ) -->
+    <script type="module">
+        import { checkAuth, logoutUser } from '../js/auth.js';
+        
+        checkAuth((user) => {
+            document.getElementById('adminInfo').innerText = "লগইন করা অ্যাডমিন: " + user.email;
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            logoutUser();
+        });
+    </script>
+
+</body>
+</html>
