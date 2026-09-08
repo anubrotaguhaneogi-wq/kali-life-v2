@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>নতুন অ্যাডমিন তৈরি - Kali Life</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+    <header>
+        <h1>Kali Life - Admin Panel</h1>
+        <nav>
+            <a href="admin-dashboard.html" style="color: white; text-decoration: none; margin-left: 15px;">ড্যাশবোর্ড</a>
+            <a href="admin-list.html" style="color: white; text-decoration: none; margin-left: 15px;">অ্যাডমিন তালিকা</a>
+        </nav>
+    </header>
+
+    <div class="container" style="max-width: 400px;">
+        <div class="card">
+            <h2>নতুন অ্যাডমিন যোগ করুন</h2>
+            <form id="createAdminForm">
+                <label for="adminEmail">অ্যাডমিন ইমেইল:</label>
+                <input type="email" id="adminEmail" required placeholder="ইমেইল লিখুন">
+
+                <label for="adminPassword">পাসওয়ার্ড:</label>
+                <input type="password" id="adminPassword" required placeholder="পাসওয়ার্ড দিন">
+
+                <button type="submit" class="btn" style="width: 100%; margin-top: 1rem;">অ্যাডমিন তৈরি করুন</button>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>
