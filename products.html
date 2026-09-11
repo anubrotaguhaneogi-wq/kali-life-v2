@@ -5,11 +5,104 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>প্রোডাক্টস - Kali Life</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        .page-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        .page-header h2 {
+            font-size: 1.9rem;
+            color: #222;
+            margin-bottom: 0.5rem;
+        }
+        .page-header p {
+            color: #555;
+            font-size: 1.05rem;
+        }
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.8rem;
+        }
+        .product-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+        }
+        .product-image {
+            height: 180px;
+            background: linear-gradient(135deg, #e8f8ef, #d4edda);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4.5rem;
+        }
+        .product-body {
+            padding: 1.4rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .product-body h3 {
+            margin: 0 0 0.6rem 0;
+            font-size: 1.25rem;
+            color: #222;
+        }
+        .product-body p {
+            color: #555;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            flex-grow: 1;
+        }
+        .price {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #27ae60;
+            margin: 0.8rem 0 1rem 0;
+        }
+        .whatsapp-btn {
+            background-color: #25D366;
+            color: white;
+            text-decoration: none;
+            padding: 0.75rem;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 600;
+            display: block;
+            transition: background 0.2s;
+        }
+        .whatsapp-btn:hover {
+            background-color: #1ebe57;
+        }
+        .badge {
+            display: inline-block;
+            background: #27ae60;
+            color: white;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.7rem;
+            border-radius: 50px;
+            margin-bottom: 0.6rem;
+        }
+        .badge.hot {
+            background: #e74c3c;
+        }
+        .badge.new {
+            background: #3498db;
+        }
+    </style>
 </head>
 <body>
 
     <header>
-        <h1>Kali Life - Products</h1>
+        <h1>Kali Life v2</h1>
         <nav>
             <a href="index.html" style="color: white; text-decoration: none; margin-left: 15px;">হোম</a>
             <a href="dashboard.html" style="color: white; text-decoration: none; margin-left: 15px;">ড্যাশবোর্ড</a>
@@ -17,24 +110,103 @@
         </nav>
     </header>
 
-    <div class="container">
-        <h2>আমাদের অর্গানিক ও ডিহাইড্রেটেড প্রোডাক্টসমূহ</h2>
-        <p>পণ্য অর্ডার করতে বা বিস্তারিত জানতে সরাসরি WhatsApp-এ যোগাযোগ করুন।</p>
-        
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
-            
+    <div class="container" style="max-width: 1100px;">
+
+        <div class="page-header">
+            <h2>আমাদের অর্গানিক ও ডিহাইড্রেটেড প্রোডাক্টসমূহ</h2>
+            <p>১০০% প্রাকৃতিক • কোনো কেমিক্যাল নেই • সরাসরি ফার্ম থেকে</p>
+        </div>
+
+        <div class="products-grid">
+
             <!-- প্রোডাক্ট ১ -->
-            <div class="card">
-                <h3>ডিহাইড্রেটেড সবজি (Kali Dry)</h3>
-                <p>স্বাস্থ্যকর ও প্রাকৃতিকভাবে শুকানো বিভিন্ন মৌসুমি সবজি।</p>
-                <a href="https://wa.me/91YOUR_PHONE_NUMBER?text=I%20want%20to%20order%20Kali%20Dry%20vegetables" target="_blank" class="btn" style="background-color: #25D366; margin-top: 1rem; display: inline-block;">WhatsApp-এ অর্ডার করুন</a>
+            <div class="product-card">
+                <div class="product-image">🥦</div>
+                <div class="product-body">
+                    <span class="badge hot">বেস্ট সেলার</span>
+                    <h3>ডিহাইড্রেটেড সবজি (Kali Dry)</h3>
+                    <p>মৌসুমি সবজি প্রাকৃতিকভাবে শুকানো। স্বাদ ও পুষ্টি অক্ষুণ্ণ থাকে। রান্নায় সহজে ব্যবহারযোগ্য।</p>
+                    <div class="price">৳ ৩৫০ / ২০০ গ্রাম</div>
+                    <a href="https://wa.me/91YOUR_PHONE_NUMBER?text=আমি%20Kali%20Dry%20সবজি%20অর্ডার%20করতে%20চাই" 
+                       target="_blank" class="whatsapp-btn">
+                        WhatsApp-এ অর্ডার করুন
+                    </a>
+                </div>
             </div>
 
             <!-- প্রোডাক্ট ২ -->
-            <div class="card">
-                <h3>অর্গানিক হলুদ ও আদা গুঁড়ো</h3>
-                <p>সম্পূর্ণ ভেজালমুক্ত খাঁটি মসলা গুঁড়ো।</p>
-                <a href="https://wa.me/91YOUR_PHONE_NUMBER?text=I%20want%20to%20order%20Organic%20Spices" target="_blank" class="btn" style="background-color: #25D366; margin-top: 1rem; display: inline-block;">WhatsApp-এ অর্ডার করুন</a>
+            <div class="product-card">
+                <div class="product-image">🟡</div>
+                <div class="product-body">
+                    <span class="badge">অর্গানিক</span>
+                    <h3>অর্গানিক হলুদ গুঁড়ো</h3>
+                    <p>সম্পূর্ণ ভেজালমুক্ত খাঁটি হলুদ। বাড়িতে শুকিয়ে তৈরি। রঙ ও গন্ধ একদম প্রাকৃতিক।</p>
+                    <div class="price">৳ ২৮০ / ২৫০ গ্রাম</div>
+                    <a href="https://wa.me/91YOUR_PHONE_NUMBER?text=আমি%20অর্গানিক%20হলুদ%20গুঁড়ো%20অর্ডার%20করতে%20চাই" 
+                       target="_blank" class="whatsapp-btn">
+                        WhatsApp-এ অর্ডার করুন
+                    </a>
+                </div>
+            </div>
+
+            <!-- প্রোডাক্ট ৩ -->
+            <div class="product-card">
+                <div class="product-image">🫚</div>
+                <div class="product-body">
+                    <span class="badge new">নতুন</span>
+                    <h3>অর্গানিক আদা গুঁড়ো</h3>
+                    <p>তাজা আদা থেকে তৈরি গুঁড়ো। সর্দি-কাশি ও হজমে খুব উপকারী। কোনো প্রিজারভেটিভ নেই।</p>
+                    <div class="price">৳ ৩২০ / ২০০ গ্রাম</div>
+                    <a href="https://wa.me/91YOUR_PHONE_NUMBER?text=আমি%20অর্গানিক%20আদা%20গুঁড়ো%20অর্ডার%20করতে%20চাই" 
+                       target="_blank" class="whatsapp-btn">
+                        WhatsApp-এ অর্ডার করুন
+                    </a>
+                </div>
+            </div>
+
+            <!-- প্রোডাক্ট ৪ -->
+            <div class="product-card">
+                <div class="product-image">🌶️</div>
+                <div class="product-body">
+                    <span class="badge">অর্গানিক</span>
+                    <h3>শুকনো মরিচ গুঁড়ো</h3>
+                    <p>দেশি লাল মরিচ থেকে তৈরি। ঝাঁঝালো স্বাদ ও প্রাকৃতিক রঙ। রান্নায় অনন্য স্বাদ আনে।</p>
+                    <div class="price">৳ ২২০ / ২০০ গ্রাম</div>
+                    <a href="https://wa.me/91YOUR_PHONE_NUMBER?text=আমি%20শুকনো%20মরিচ%20গুঁড়ো%20অর্ডার%20করতে%20চাই" 
+                       target="_blank" class="whatsapp-btn">
+                        WhatsApp-এ অর্ডার করুন
+                    </a>
+                </div>
+            </div>
+
+            <!-- প্রোডাক্ট ৫ -->
+            <div class="product-card">
+                <div class="product-image">🧄</div>
+                <div class="product-body">
+                    <span class="badge">অর্গানিক</span>
+                    <h3>রসুন গুঁড়ো</h3>
+                    <p>তাজা রসুন শুকিয়ে তৈরি। তেল ও প্রিজারভেটিভমুক্ত। স্বাদ ও গন্ধ একদম আসল।</p>
+                    <div class="price">৳ ৩০০ / ১৫০ গ্রাম</div>
+                    <a href="https://wa.me/91YOUR_PHONE_NUMBER?text=আমি%20রসুন%20গুঁড়ো%20অর্ডার%20করতে%20চাই" 
+                       target="_blank" class="whatsapp-btn">
+                        WhatsApp-এ অর্ডার করুন
+                    </a>
+                </div>
+            </div>
+
+            <!-- প্রোডাক্ট ৬ -->
+            <div class="product-card">
+                <div class="product-image">🍃</div>
+                <div class="product-body">
+                    <span class="badge hot">বেস্ট সেলার</span>
+                    <h3>মিশ্র ডিহাইড্রেটেড সবজি</h3>
+                    <p>বিভিন্ন সবজির মিশ্রণ। স্যুপ, তরকারি ও নুডলসে ব্যবহারের জন্য পারফেক্ট।</p>
+                    <div class="price">৳ ৪২০ / ৩০০ গ্রাম</div>
+                    <a href="https://wa.me/91YOUR_PHONE_NUMBER?text=আমি%20মিশ্র%20ডিহাইড্রেটেড%20সবজি%20অর্ডার%20করতে%20চাই" 
+                       target="_blank" class="whatsapp-btn">
+                        WhatsApp-এ অর্ডার করুন
+                    </a>
+                </div>
             </div>
 
         </div>
