@@ -4,27 +4,106 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kali Life - Healthy Kitchen & Organic Farming</title>
-    <!-- আমাদের তৈরি করা কমন CSS ফাইলের লিংক -->
     <link rel="stylesheet" href="css/style.css">
+    <!-- Google Fonts (optional but recommended) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <header>
-        <h1>Kali Life v2</h1>
-        <nav>
-            <a href="index.html" style="color: white; text-decoration: none; margin-left: 15px;">হোম</a>
-            <a href="products.html" style="color: white; text-decoration: none; margin-left: 15px;">প্রোডাক্টস</a>
-            <a href="login.html" style="color: white; text-decoration: none; margin-left: 15px;">লগইন</a>
-        </nav>
-    </header>
-
-    <div class="container">
-        <div class="card">
-            <h2>স্বাগতম Kali Life প্রজেক্টে!</h2>
-            <p>এটি আমাদের অর্গানিক ফার্মিং এবং হেলথি কিচেন প্রজেক্টের অফিশিয়াল ওয়েবসাইট।</p>
-            <a href="products.html" class="btn" style="margin-top: 15px; display: inline-block;">প্রোডাক্টস দেখুন</a>
+    <!-- ========== NAVBAR ========== -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">Kali Life</a>
+            
+            <ul class="nav-links">
+                <li><a href="index.html" class="active">হোম</a></li>
+                <li><a href="products.html">প্রোডাক্টস</a></li>
+                <li><a href="login.html">লগইন</a></li>
+                <li><a href="register.html" class="btn btn-primary btn-sm">রেজিস্টার</a></li>
+            </ul>
         </div>
-    </div>
+    </nav>
+
+    <!-- ========== HERO SECTION ========== -->
+    <section class="hero">
+        <div class="container">
+            <h1>স্বাগতম Kali Life-এ</h1>
+            <p>
+                অর্গানিক ফার্মিং এবং হেলথি কিচেনের সাথে প্রকৃতির সেরা উপহার সরাসরি আপনার ঘরে। 
+                বিশুদ্ধ, স্বাস্থ্যকর এবং টেকসই জীবনযাত্রার প্রতিশ্রুতি।
+            </p>
+            <div class="hero-buttons">
+                <a href="products.html" class="btn btn-primary btn-lg">প্রোডাক্টস দেখুন</a>
+                <a href="register.html" class="btn btn-secondary btn-lg">আজই যোগ দিন</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== FEATURES / ABOUT ========== -->
+    <section class="dashboard">
+        <div class="container">
+            <div class="text-center mb-4">
+                <h2>কেন Kali Life?</h2>
+                <p>আমরা বিশ্বাস করি স্বাস্থ্যকর জীবন শুরু হয় বিশুদ্ধ খাবার থেকে</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="icon">🌱</div>
+                    <div class="label">১০০% অর্গানিক</div>
+                    <div class="value" style="font-size: 1.3rem;">বিশুদ্ধ উপাদান</div>
+                    <p class="mt-1" style="font-size: 0.9rem;">কোনো রাসায়নিক সার বা কীটনাশক ছাড়া চাষ করা</p>
+                </div>
+
+                <div class="stat-card">
+                    <div class="icon">🏡</div>
+                    <div class="label">সরাসরি ফার্ম থেকে</div>
+                    <div class="value" style="font-size: 1.3rem;">ফার্ম টু হোম</div>
+                    <p class="mt-1" style="font-size: 0.9rem;">মাঝখানের দালাল ছাড়া সরাসরি আপনার কাছে</p>
+                </div>
+
+                <div class="stat-card">
+                    <div class="icon">💚</div>
+                    <div class="label">স্বাস্থ্যকর জীবন</div>
+                    <div class="value" style="font-size: 1.3rem;">হেলথি কিচেন</div>
+                    <p class="mt-1" style="font-size: 0.9rem;">পুষ্টিকর ও সুস্বাদু রেসিপি এবং পণ্য</p>
+                </div>
+
+                <div class="stat-card">
+                    <div class="icon">🤝</div>
+                    <div class="label">বিশ্বস্ত কমিউনিটি</div>
+                    <div class="value" style="font-size: 1.3rem;">একসাথে গড়ি</div>
+                    <p class="mt-1" style="font-size: 0.9rem;">কৃষক ও গ্রাহকের মধ্যে সেতুবন্ধন</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== CTA SECTION ========== -->
+    <section style="padding: 4rem 0;">
+        <div class="container">
+            <div class="card text-center" style="background: linear-gradient(135deg, #1e1b4b, #0f172a); border-color: #6366f1;">
+                <h2 style="margin-bottom: 1rem;">আজই শুরু করুন আপনার স্বাস্থ্যকর যাত্রা</h2>
+                <p style="margin-bottom: 2rem; max-width: 500px; margin-left: auto; margin-right: auto;">
+                    আমাদের সাথে যুক্ত হোন এবং অর্গানিক পণ্যের বিশাল সংগ্রহ উপভোগ করুন।
+                </p>
+                <div class="hero-buttons">
+                    <a href="products.html" class="btn btn-primary btn-lg">এখনই কিনুন</a>
+                    <a href="register.html" class="btn btn-outline btn-lg">অ্যাকাউন্ট খুলুন</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer">
+        <div class="container">
+            <p>© ২০২৬ Kali Life. Healthy Kitchen & Organic Farming Project</p>
+            <p class="mt-1">Made with 💚 for a healthier tomorrow</p>
+        </div>
+    </footer>
 
 </body>
 </html>
