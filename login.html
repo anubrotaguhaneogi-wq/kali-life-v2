@@ -5,30 +5,58 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>লগইন - Kali Life</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <header>
-        <h1>Kali Life v2</h1>
-        <nav>
-            <a href="index.html" style="color: white; text-decoration: none; margin-left: 15px;">হোম</a>
-            <a href="register.html" style="color: white; text-decoration: none; margin-left: 15px;">রেজিস্ট্রেশন</a>
-        </nav>
-    </header>
+    <div class="auth-wrapper">
+        <div class="auth-card">
+            
+            <!-- Logo -->
+            <div class="auth-logo">
+                <h1>Kali Life</h1>
+                <p>আপনার অ্যাকাউন্টে লগইন করুন</p>
+            </div>
 
-    <div class="container" style="max-width: 400px;">
-        <div class="card">
-            <h2>লগইন করুন</h2>
+            <!-- Login Form -->
             <form id="loginForm">
-                <label for="email">ইমেইল:</label>
-                <input type="email" id="email" required placeholder="আপনার ইমেইল লিখুন">
+                <div class="form-group">
+                    <label for="email">ইমেইল</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        class="form-control" 
+                        placeholder="আপনার ইমেইল লিখুন" 
+                        required
+                    >
+                </div>
 
-                <label for="password">পাসওয়ার্ড:</label>
-                <input type="password" id="password" required placeholder="আপনার পাসওয়ার্ড দিন">
+                <div class="form-group">
+                    <label for="password">পাসওয়ার্ড</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        class="form-control" 
+                        placeholder="আপনার পাসওয়ার্ড দিন" 
+                        required
+                    >
+                </div>
 
-                <button type="submit" class="btn" style="width: 100%; margin-top: 1rem;">লগইন</button>
+                <button type="submit" class="btn btn-primary btn-block btn-lg">
+                    লগইন করুন
+                </button>
             </form>
-            <p style="margin-top: 1rem; text-align: center;">অ্যাকাউন্ট নেই? <a href="register.html">রেজিস্ট্রার করুন</a></p>
+
+            <!-- Footer Links -->
+            <div class="form-footer">
+                অ্যাকাউন্ট নেই? 
+                <a href="register.html">রেজিস্টার করুন</a>
+                <br>
+                <a href="index.html" style="display: inline-block; margin-top: 12px; font-size: 0.9rem;">← হোমপেজে ফিরে যান</a>
+            </div>
+
         </div>
     </div>
 
