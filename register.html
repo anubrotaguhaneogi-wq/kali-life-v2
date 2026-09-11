@@ -5,6 +5,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>রেজিস্ট্রেশন - Kali Life</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* অতিরিক্ত স্টাইল (যদি style.css-এ না থাকে) */
+        .password-wrapper {
+            position: relative;
+        }
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            color: #555;
+        }
+        .error-message {
+            color: #e74c3c;
+            font-size: 13px;
+            margin-top: 4px;
+            display: none;
+        }
+        .success-message {
+            color: #27ae60;
+            font-size: 14px;
+            text-align: center;
+            margin-top: 12px;
+            display: none;
+        }
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #fff;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
 
@@ -16,21 +65,144 @@
         </nav>
     </header>
 
-    <div class="container" style="max-width: 400px;">
+    <div class="container" style="max-width: 420px;">
         <div class="card">
             <h2>নতুন অ্যাকাউন্ট তৈরি করুন</h2>
+
             <form id="registerForm">
+                <!-- ইমেইল -->
                 <label for="email">ইমেইল:</label>
                 <input type="email" id="email" required placeholder="আপনার ইমেইল লিখুন">
+                <div class="error-message" id="emailError"></div>
 
-                <label for="password">পাসওয়ার্ড:</label>
-                <input type="password" id="password" required placeholder="কমপক্ষে ৬ অক্ষরের পাসওয়ার্ড">
+                <!-- পাসওয়ার্ড -->
+                <label for="password">পাসওয়ার্ড:</label>
+                <div class="password-wrapper">
+                    <input type="password" id="password" required placeholder="কমপক্ষে ৬ অক্ষরের পাসওয়ার্ড" minlength="6">
+                    <button type="button" class="toggle-password" onclick="togglePassword('password', this)">দেখুন</button>
+                </div>
+                <div class="error-message" id="passwordError"></div>
 
-                <button type="submit" class="btn" style="width: 100%; margin-top: 1rem;">রেজিস্ট্রার করুন</button>
+                <!-- পাসওয়ার্ড কনফার্ম -->
+                <label for="confirmPassword">পাসওয়ার্ড নিশ্চিত করুন:</label>
+                <div class="password-wrapper">
+                    <input type="password" id="confirmPassword" required placeholder="পাসওয়ার্ড আবার লিখুন">
+                    <button type="button" class="toggle-password" onclick="togglePassword('confirmPassword', this)">দেখুন</button>
+                </div>
+                <div class="error-message" id="confirmError"></div>
+
+                <button type="submit" class="btn" id="submitBtn" style="width: 100%; margin-top: 1.2rem;">
+                    রেজিস্ট্রার করুন
+                </button>
+
+                <div class="success-message" id="successMessage">
+                    অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে! লগইন পেজে যাচ্ছেন...
+                </div>
             </form>
-            <p style="margin-top: 1rem; text-align: center;">আগে থেকেই অ্যাকাউন্ট আছে? <a href="login.html">লগইন করুন</a></p>
+
+            <p style="margin-top: 1.2rem; text-align: center;">
+                আগে থেকেই অ্যাকাউন্ট আছে? <a href="login.html">লগইন করুন</a>
+            </p>
         </div>
     </div>
 
+    <script>
+        // পাসওয়ার্ড দেখানো/লুকানো
+        function togglePassword(inputId, button) {
+            const input = document.getElementById(inputId);
+            if (input.type === "password") {
+                input.type = "text";
+                button.textContent = "লুকান";
+            } else {
+                input.type = "password";
+                button.textContent = "দেখুন";
+            }
+        }
+
+        // এরর দেখানোর ফাংশন
+        function showError(elementId, message) {
+            const el = document.getElementById(elementId);
+            el.textContent = message;
+            el.style.display = "block";
+        }
+
+        function clearErrors() {
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.style.display = "none";
+                el.textContent = "";
+            });
+        }
+
+        // ফর্ম সাবমিট
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            clearErrors();
+
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const submitBtn = document.getElementById('submitBtn');
+
+            let hasError = false;
+
+            // ইমেইল চেক
+            if (!email) {
+                showError('emailError', 'ইমেইল দিতে হবে');
+                hasError = true;
+            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                showError('emailError', 'সঠিক ইমেইল দিন');
+                hasError = true;
+            }
+
+            // পাসওয়ার্ড চেক
+            if (password.length < 6) {
+                showError('passwordError', 'পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে');
+                hasError = true;
+            }
+
+            // কনফার্ম পাসওয়ার্ড চেক
+            if (password !== confirmPassword) {
+                showError('confirmError', 'পাসওয়ার্ড মিলছে না');
+                hasError = true;
+            }
+
+            if (hasError) return;
+
+            // লোডিং স্টেট
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="loading"></span> প্রসেস হচ্ছে...';
+
+            // ডেমো রেজিস্ট্রেশন (লোকালস্টোরেজ)
+            setTimeout(() => {
+                // আগে থেকে ইউজার আছে কিনা চেক
+                const users = JSON.parse(localStorage.getItem('kaliUsers') || '[]');
+                const existingUser = users.find(u => u.email === email);
+
+                if (existingUser) {
+                    showError('emailError', 'এই ইমেইল দিয়ে আগে থেকেই অ্যাকাউন্ট আছে');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'রেজিস্ট্রার করুন';
+                    return;
+                }
+
+                // নতুন ইউজার সেভ
+                users.push({
+                    email: email,
+                    password: password,   // নোট: আসল প্রজেক্টে কখনো প্লেইন পাসওয়ার্ড সেভ করবেন না
+                    createdAt: new Date().toISOString()
+                });
+                localStorage.setItem('kaliUsers', JSON.stringify(users));
+
+                // সাকসেস মেসেজ
+                document.getElementById('successMessage').style.display = 'block';
+
+                // ১.৫ সেকেন্ড পর লগইন পেজে পাঠাও
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1500);
+
+            }, 900);
+        });
+    </script>
 </body>
 </html>
