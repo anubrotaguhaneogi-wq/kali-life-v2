@@ -28,3 +28,20 @@ export function logoutUser() {
         console.error("Logout Error: ", error);
     });
 }
+const loginForm = document.getElementById("loginForm");
+
+if (loginForm) {
+  loginForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      window.location.href = "dashboard.html";
+    } catch (error) {
+      alert("লগইন ব্যর্থ: " + error.message);
+    }
+  });
+}
