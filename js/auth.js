@@ -1,6 +1,6 @@
 // Authentication & Session Management
 import { auth } from './firebase.js';
-import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { onAuthStateChanged, signOut, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
 // ইউজার লগইন আছে কিনা চেক করা
 export function checkAuth(onLoggedIn, onLoggedOut) {
