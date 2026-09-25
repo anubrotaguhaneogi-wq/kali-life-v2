@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Service Log — T-Garden Service Logbook</title>
+<style>
+  :root{
+    --ink:#12201c;
+    --panel:#16241f;
+    --panel-2:#1c322a;
+    --line: #2e4a3f;
+    --amber:#e0a72e;
+    --amber-dim:#a97e22;
+    --text:#eef3ee;
+    --text-dim:#9fb3a8;
+    --ok:#4f9d69;
+    --danger:#c65c4a;
+    --bg:#0b1310;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    background-image:
+      linear-gradient(180deg, rgba(224,167,46,0.05), transparent 300px),
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 3px);
+    color:var(--text);
+    font-family: 'Segoe UI', 'Noto Sans Bengali', system-ui, sans-serif;
+    min-height:100vh;
+    padding: 20px 14px 60px;
+  }
+  .wrap{max-width:640px; margin:0 auto;}
+
+  header{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    border-bottom:2px solid var(--line);
+    padding-bottom:14px;
+    margin-bottom:22px;
+  }
+  header .tag{
+    font-size:11px;
+    letter-spacing:0.04em;
+    color:var(--amber);
+    border:1px solid var(--amber-dim);
+    padding:3px 8px;
+    border-radius:3px;
+  }
+  h1{
+    font-size:22px;
+    margin:6px 0 2px;
+    font-weight:700;
+    letter-spacing:-0.01em;
+  }
+  .sub{color:var(--text-dim); font-size:13px; margin:0;}
+
+  .card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:20px 18px;
+    margin-bottom:18px;
+    position:relative;
+  }
+  .card::before{
+    content:'';
+    position:absolute;
+    top:0; left:0; bottom:0;
+    width:3px;
+    background:var(--amber);
+    border-radius:8px 0 0 8px;
+  }
+
+  label{
+    display:block;
+    font-size:13px;
+    color:var(--text-dim);
+    margin:14px 0 6px;
+  }
+  label:first-of-type{margin-top:0;}
+  label .req{color:var(--amber); margin-left:2px;}
+
+  input, select, textarea{
+    width:100%;
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    border-radius:5px;
+    padding:11px 12px;
+    color:var(--text);
+    font-size:15px;
+    font-family:inherit;
+  }
+  input:focus, select:focus, textarea:focus{
+    outline:2px solid var(--amber);
+    outline-offset:1px;
+    border-color:var(--amber);
+  }
+  textarea{resize:vertical; min-height:64px;}
+
+  .row2{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  @media (max-width:480px){ .row2{grid-template-columns:1fr;} }
+
+  .add-inline{
+    display:flex; gap:8px; margin-top:6px;
+  }
+  .add-inline input{flex:1;}
+  .add-inline button{
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    color:var(--text-dim);
+    border-radius:5px;
+    padding:0 14px;
+    font-size:13px;
+    cursor:pointer;
+  }
+  .add-inline button:hover{border-color:var(--amber); color:var(--amber);}
+
+  .submit-row{margin-top:22px; display:flex; gap:10px; align-items:center;}
+  button.primary{
+    background:var(--amber);
+    color:#1b1305;
+    border:none;
+    border-radius:5px;
+    padding:13px 22px;
+    font-size:15px;
+    font-weight:700;
+    cursor:pointer;
+    flex:1;
+  }
+  button.primary:hover{background:#eeb746;}
+  button.primary:disabled{opacity:0.5; cursor:default;}
+
+  .status{font-size:13px; color:var(--ok); min-height:18px;}
+  .status.err{color:var(--danger);}
+
+  .log-header{
+    display:flex; justify-content:space-between; align-items:baseline;
+    margin-bottom:12px;
+  }
+  .log-header h2{font-size:15px; margin:0; color:var(--text-dim); font-weight:600; letter-spacing:0.02em;}
+  .log-count{font-size:12px; color:var(--text-dim);}
+
+  .entry{
+    border-bottom:1px solid var(--line);
+    padding:12px 0;
+  }
+  .entry:last-child{border-bottom:none;}
+  .entry-top{
+    display:flex; justify-content:space-between; gap:10px;
+    font-size:13px; color:var(--amber); margin-bottom:4px;
+  }
+  .entry-item{font-weight:700; color:var(--text);}
+  .entry-meta{font-size:12px; color:var(--text-dim); margin-bottom:6px;}
+  .entry-remarks{font-size:14px; line-height:1.5;}
+  .entry-extra{font-size:12px; color:var(--text-dim); margin-top:6px;}
+  .empty{color:var(--text-dim); font-size:14px; text-align:center; padding:24px 0;}
+
+  .loading{color:var(--text-dim); font-size:13px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div>
+      <div class="tag">T-GARDEN SERVICE LOGBOOK</div>
+      <h1>Service Log এন্ট্রি</h1>
+      <p class="sub">প্রতিদিনের কাজের রেকর্ড এখানে যোগ করুন</p>
+    </div>
+  </header>
+
+  <div class="card">
+    <form id="logForm">
+
+      <label for="date">তারিখ <span class="req">*</span></label>
+      <input type="date" id="date" required>
+
+      <div class="row2">
+        <div>
+          <label for="company">কোম্পানি <span class="req">*</span></label>
+          <select id="company" required></select>
+          <div class="add-inline">
+            <input type="text" id="newCompany" placeholder="নতুন কোম্পানির নাম">
+            <button type="button" id="addCompanyBtn">যোগ করুন</button>
+          </div>
+        </div>
+        <div>
+          <label for="item">যন্ত্র / আইটেম <span class="req">*</span></label>
+          <select id="item" required></select>
+          <div class="add-inline">
+            <input type="text" id="newItem" placeholder="নতুন যন্ত্রের নাম">
+            <button type="button" id="addItemBtn">যোগ করুন</button>
+          </div>
+        </div>
+      </div>
+
+      <label for="remarks">কাজের বিবরণ / রিমার্কস <span class="req">*</span></label>
+      <textarea id="remarks" required placeholder="কী কাজ করা হয়েছে..."></textarea>
+
+      <div class="row2">
+        <div>
+          <label for="parts">ব্যবহৃত পার্টস</label>
+          <input type="text" id="parts" placeholder="যেমন: বিয়ারিং, ফিউজ">
+        </div>
+        <div>
+          <label for="cost">খরচ (₹)</label>
+          <input type="number" id="cost" min="0" step="1" placeholder="0">
+        </div>
+      </div>
+
+      <div class="row2">
+        <div>
+          <label for="technician">টেকনিশিয়ানের নাম</label>
+          <input type="text" id="technician" placeholder="নাম">
+        </div>
+        <div>
+          <label for="nextDue">পরবর্তী সার্ভিস তারিখ</label>
+          <input type="date" id="nextDue">
+        </div>
+      </div>
+
+      <div class="submit-row">
+        <button type="submit" class="primary" id="submitBtn">এন্ট্রি সেভ করুন</button>
+      </div>
+      <div class="status" id="status"></div>
+    </form>
+  </div>
+
+  <div class="card">
+    <div class="log-header">
+      <h2>সাম্প্রতিক এন্ট্রি</h2>
+      <span class="log-count" id="logCount"></span>
+    </div>
+    <div id="logList"><div class="loading">লোড হচ্ছে...</div></div>
+  </div>
+
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+function todayStr(){
+  const d = new Date();
+  return d.toISOString().slice(0,10);
+}
+$('date').value = todayStr();
+
+let companies = [];
+let items = [];
+let entries = [];
+
+const DEFAULT_ITEMS = [
+  'মোটর (Motor)',
+  'VFD (Variable Frequency Drive)',
+  'PLC প্যানেল',
+  'MCB',
+  'MCCB',
+  'কন্টাক্টর (Contactor)',
+  'রিলে (Relay)',
+  'ট্রান্সফরমার',
+  'DOL স্টার্টার',
+  'স্টার-ডেল্টা স্টার্টার',
+  'সফট স্টার্টার',
+  'ক্যাপাসিটর ব্যাংক',
+  'আর্থিং সিস্টেম',
+  'কেবল / ওয়্যারিং',
+  'ডিস্ট্রিবিউশন প্যানেল বোর্ড',
+  'বিয়ারিং',
+  'এক্সহস্ট ফ্যান',
+  'ব্লোয়ার',
+  'সেন্সর (তাপমাত্রা/আর্দ্রতা)',
+  'উইদারিং ট্রফ ফ্যান',
+  'রোটরভেন (Rotorvane)',
+  'CTC মেশিন (রোলার)',
+  'CFM (Continuous Fermenting Machine)',
+  'ড্রায়ার (ECP / Fluid Bed Dryer)',
+  'সর্টিং মেশিন (Vibro Sorter)',
+  'ফাইবার এক্সট্রাক্টর',
+  'স্ট্যাক এক্সট্রাক্টর (ESE)',
+  'কালার সর্টার',
+  'গ্রিন লিফ ওয়েয়িং ব্রিজ',
+  'বাকেট এলিভেটর',
+  'টি প্যাকিং মেশিন',
+  'হিউমিডিফায়ার',
+  'ফার্নেস / চুল্লা ব্লোয়ার'
+];
+
+function renderSelect(sel, list, placeholder){
+  sel.innerHTML = '<option value="" disabled selected>' + placeholder + '</option>' +
+    list.map(v => `<option value="${escapeAttr(v)}">${escapeHtml(v)}</option>`).join('');
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function escapeAttr(s){ return escapeHtml(s); }
+
+async function loadLists(){
+  try{
+    const c = await window.storage.get('amc:companies');
+    companies = c ? JSON.parse(c.value) : [];
+  }catch(e){ companies = []; }
+  try{
+    const it = await window.storage.get('amc:items');
+    items = it ? JSON.parse(it.value) : null;
+  }catch(e){ items = null; }
+  if(items === null){
+    items = [...DEFAULT_ITEMS];
+    try{ await window.storage.set('amc:items', JSON.stringify(items)); }catch(e){}
+  }
+  renderSelect($('company'), companies, 'কোম্পানি বাছাই করুন');
+  renderSelect($('item'), items, 'যন্ত্র বাছাই করুন');
+}
+
+async function saveCompanies(){
+  await window.storage.set('amc:companies', JSON.stringify(companies));
+}
+async function saveItems(){
+  await window.storage.set('amc:items', JSON.stringify(items));
+}
+
+$('addCompanyBtn').addEventListener('click', async () => {
+  const v = $('newCompany').value.trim();
+  if(!v) return;
+  if(!companies.includes(v)) companies.push(v);
+  await saveCompanies();
+  renderSelect($('company'), companies, 'কোম্পানি বাছাই করুন');
+  $('company').value = v;
+  $('newCompany').value = '';
+});
+
+$('addItemBtn').addEventListener('click', async () => {
+  const v = $('newItem').value.trim();
+  if(!v) return;
+  if(!items.includes(v)) items.push(v);
+  await saveItems();
+  renderSelect($('item'), items, 'যন্ত্র বাছাই করুন');
+  $('item').value = v;
+  $('newItem').value = '';
+});
+
+async function loadEntries(){
+  try{
+    const res = await window.storage.get('amc:service-logs');
+    entries = res ? JSON.parse(res.value) : [];
+  }catch(e){
+    entries = [];
+  }
+  renderEntries();
+}
+
+function renderEntries(){
+  const list = $('logList');
+  const count = $('logCount');
+  count.textContent = entries.length ? entries.length + 'টি এন্ট্রি' : '';
+  if(!entries.length){
+    list.innerHTML = '<div class="empty">এখনো কোনো এন্ট্রি নেই</div>';
+    return;
+  }
+  const sorted = [...entries].sort((a,b) => (b.date||'').localeCompare(a.date||'') || (b.createdAt||0)-(a.createdAt||0));
+  list.innerHTML = sorted.slice(0,25).map(e => `
+    <div class="entry">
+      <div class="entry-top">
+        <span class="entry-item">${escapeHtml(e.item)}</span>
+        <span>${escapeHtml(e.date)}</span>
+      </div>
+      <div class="entry-meta">${escapeHtml(e.company)}${e.technician ? ' · ' + escapeHtml(e.technician) : ''}</div>
+      <div class="entry-remarks">${escapeHtml(e.remarks)}</div>
+      ${(e.parts || e.cost || e.nextDue) ? `<div class="entry-extra">${[
+        e.parts ? 'পার্টস: ' + escapeHtml(e.parts) : '',
+        e.cost ? 'খরচ: ₹' + escapeHtml(e.cost) : '',
+        e.nextDue ? 'পরবর্তী: ' + escapeHtml(e.nextDue) : ''
+      ].filter(Boolean).join(' · ')}</div>` : ''}
+    </div>
+  `).join('');
+}
+
+$('logForm').addEventListener('submit', async (ev) => {
+  ev.preventDefault();
+  const status = $('status');
+  const btn = $('submitBtn');
+
+  const entry = {
+    date: $('date').value,
+    company: $('company').value,
+    item: $('item').value,
+    remarks: $('remarks').value.trim(),
+    parts: $('parts').value.trim(),
+    cost: $('cost').value,
+    technician: $('technician').value.trim(),
+    nextDue: $('nextDue').value,
+    createdAt: Date.now()
+  };
+
+  if(!entry.date || !entry.company || !entry.item || !entry.remarks){
+    status.textContent = 'তারিখ, কোম্পানি, যন্ত্র ও কাজের বিবরণ আবশ্যক';
+    status.className = 'status err';
+    return;
+  }
+
+  btn.disabled = true;
+  status.textContent = 'সেভ হচ্ছে...';
+  status.className = 'status';
+
+  try{
+    entries.push(entry);
+    const result = await window.storage.set('amc:service-logs', JSON.stringify(entries));
+    if(!result){
+      throw new Error('save failed');
+    }
+    status.textContent = 'এন্ট্রি সেভ হয়েছে ✓';
+    status.className = 'status';
+    $('logForm').reset();
+    $('date').value = todayStr();
+    $('company').selectedIndex = 0;
+    $('item').selectedIndex = 0;
+    renderEntries();
+  }catch(e){
+    entries.pop();
+    status.textContent = 'সেভ করা যায়নি, আবার চেষ্টা করুন';
+    status.className = 'status err';
+  }finally{
+    btn.disabled = false;
+  }
+});
+
+(async function init(){
+  await loadLists();
+  await loadEntries();
+})();
+</script>
+</body>
+</html>
