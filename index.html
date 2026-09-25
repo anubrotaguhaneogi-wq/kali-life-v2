@@ -4,26 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kali Life - Healthy Kitchen & Organic Farming</title>
-    
+
     <!-- Google Fonts - Inter & Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
+
     <style>
         :root {
             --bg-deep: #050b14;
             --bg-card: rgba(13, 22, 38, 0.75);
             --border-subtle: rgba(255, 255, 255, 0.08);
             --border-hover: rgba(16, 185, 129, 0.4);
-            
+
             --primary: #10b981;
             --primary-hover: #059669;
             --primary-glow: rgba(16, 185, 129, 0.25);
-            
+
+            --amber: #d97706;
+            --amber-glow: rgba(217, 119, 6, 0.25);
+
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
-            
+
             --transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
@@ -40,7 +43,7 @@
             min-height: 100vh;
             overflow-x: hidden;
             line-height: 1.6;
-            background-image: 
+            background-image:
                 radial-gradient(circle at 15% 15%, rgba(16, 185, 129, 0.06) 0%, transparent 45%),
                 radial-gradient(circle at 85% 85%, rgba(59, 130, 246, 0.05) 0%, transparent 45%);
         }
@@ -293,6 +296,109 @@
             line-height: 1.6;
         }
 
+        /* ========== SERVICES (ECOSYSTEM) SECTION ========== */
+        .services {
+            padding: 2rem 0 5rem;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.75rem;
+        }
+
+        .service-card {
+            position: relative;
+            border-radius: 22px;
+            overflow: hidden;
+            border: 1px solid var(--border-subtle);
+            min-height: 280px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            text-decoration: none;
+            transition: var(--transition);
+            background-size: cover;
+            background-position: center;
+            isolation: isolate;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(5, 11, 20, 0.15) 0%, rgba(5, 11, 20, 0.55) 55%, rgba(5, 11, 20, 0.94) 100%);
+            z-index: -1;
+        }
+
+        .service-card:hover {
+            transform: translateY(-6px);
+            border-color: var(--border-hover);
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5);
+        }
+
+        .service-card.is-soon:hover {
+            transform: none;
+            border-color: var(--border-subtle);
+            box-shadow: none;
+            cursor: default;
+        }
+
+        .service-body {
+            padding: 1.75rem 1.75rem 2rem;
+        }
+
+        .service-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            margin-bottom: 0.9rem;
+            letter-spacing: 0.2px;
+        }
+
+        .service-pill.active {
+            background: rgba(16, 185, 129, 0.18);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            color: #6ee7b7;
+        }
+
+        .service-pill.soon {
+            background: rgba(217, 119, 6, 0.18);
+            border: 1px solid rgba(217, 119, 6, 0.4);
+            color: #fbbf24;
+        }
+
+        .service-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+        }
+
+        .service-desc {
+            color: #cbd5e1;
+            font-size: 0.93rem;
+            line-height: 1.6;
+            margin-bottom: 1.1rem;
+        }
+
+        .service-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: #6ee7b7;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .service-card.is-soon .service-desc {
+            color: var(--text-muted);
+        }
+
         /* ========== PREMIUM CTA SECTION ========== */
         .cta-section {
             padding: 3rem 0 6rem;
@@ -367,10 +473,11 @@
                 <div class="logo-icon">🌿</div>
                 <span class="logo-text">Kali Life</span>
             </a>
-            
+
             <ul class="nav-links">
                 <li><a href="index.html" class="active">হোম</a></li>
                 <li><a href="products.html">প্রোডাক্টস</a></li>
+                <li><a href="amc.html">ফ্যাক্টরি মেইনটেন্যান্স</a></li>
                 <li><a href="login.html">লগইন</a></li>
                 <li><a href="register.html" class="btn btn-primary" style="padding: 0.55rem 1.25rem; font-size: 0.9rem;">রেজিস্টার</a></li>
             </ul>
@@ -385,8 +492,8 @@
             </div>
             <h1>স্বাগতম Kali Life-এ</h1>
             <p>
-                অর্গানিক ফার্মিং এবং হেলথি কিচেনের সাথে প্রকৃতির সেরা উপহার সরাসরি আপনার ঘরে। 
-                বিশুদ্ধতা ও বিশ্বাসের সাথে গড়া আমাদের পথচলা।
+                অর্গানিক ফার্মিং এবং হেলথি কিচেনের সাথে প্রকৃতির সেরা উপহার সরাসরি আপনার ঘরে।
+                বিশুদ্ধতা ও বিশ্বাসের সাথে গড়া আমাদের পথচলা।
             </p>
             <div class="btn-group">
                 <a href="products.html" class="btn btn-primary">
@@ -404,7 +511,7 @@
         <div class="container">
             <div class="section-header">
                 <h2>কেন Kali Life?</h2>
-                <p>আমরা বিশ্বাস করি স্বাস্থ্যকর জীবন শুরু হয় বিশুদ্ধ খাবার থেকে</p>
+                <p>আমরা বিশ্বাস করি স্বাস্থ্যকর জীবন শুরু হয় বিশুদ্ধ খাবার থেকে</p>
             </div>
 
             <div class="features-grid">
@@ -412,14 +519,14 @@
                     <div class="feature-icon-box">🌱</div>
                     <span class="feature-tag">১০০% অর্গানিক</span>
                     <h3 class="feature-title">বিশুদ্ধ উপাদান</h3>
-                    <p class="feature-desc">কোনো ধরনের রাসায়নিক সার বা ক্ষতিকর কীটনাশক ছাড়া সম্পূর্ণ প্রাকৃতিকভাবে উৎপাদিত পণ্য।</p>
+                    <p class="feature-desc">কোনো ধরনের রাসায়নিক সার বা ক্ষতিকর কীটনাশক ছাড়া সম্পূর্ণ প্রাকৃতিকভাবে উৎপাদিত পণ্য।</p>
                 </div>
 
                 <div class="feature-card">
                     <div class="feature-icon-box">🏡</div>
                     <span class="feature-tag">সরাসরি ফার্ম থেকে</span>
                     <h3 class="feature-title">ফার্ম টু হোম</h3>
-                    <p class="feature-desc">মাঝখানের কোনো মধ্যস্বত্বভোগী বা দালাল ছাড়া সরাসরি কৃষকের খামার থেকে আপনার কাছে পৌঁছে যায়।</p>
+                    <p class="feature-desc">মাঝখানের কোনো মধ্যস্বত্বভোগী বা দালাল ছাড়া সরাসরি কৃষকের খামার থেকে আপনার কাছে পৌঁছে যায়।</p>
                 </div>
 
                 <div class="feature-card">
@@ -432,34 +539,62 @@
                 <div class="feature-card">
                     <div class="feature-icon-box">🤝</div>
                     <span class="feature-tag">কমিউনিটি</span>
-                    <h3 class="feature-title">একসাথে গড়ি</h3>
-                    <p class="feature-desc">সচেতন কৃষক ও ক্রেতাদের নিয়ে গড়ে ওঠা একটি নির্ভরযোগ্য এবং টেকসই শক্তিশালী নেটওয়ার্ক।</p>
+                    <h3 class="feature-title">একসাথে গড়ি</h3>
+                    <p class="feature-desc">সচেতন কৃষক ও ক্রেতাদের নিয়ে গড়ে ওঠা একটি নির্ভরযোগ্য এবং টেকসই শক্তিশালী নেটওয়ার্ক।</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- ========== CTA SECTION ========== -->
-    <section class="cta-section">
+    <!-- ========== SERVICES / ECOSYSTEM SECTION ========== -->
+    <section class="services">
         <div class="container">
-            <div class="cta-box">
-                <h2>আজই শুরু করুন আপনার স্বাস্থ্যকর যাত্রা</h2>
-                <p>আমাদের কমিউনিটির সাথে যুক্ত হন এবং অর্গানিক পণ্যের বিশাল সংগ্রহ থেকে আপনার পছন্দের পণ্যটি বেছে নিন।</p>
-                <div class="btn-group">
-                    <a href="products.html" class="btn btn-primary">এখনই কিনুন</a>
-                    <a href="register.html" class="btn btn-secondary">অ্যাকাউন্ট খুলুন</a>
-                </div>
+            <div class="section-header">
+                <h2>আমাদের কৃষিভিত্তিক সেবাসমূহ</h2>
+                <p>ক্ষেত থেকে চা বাগান — Kali Life-এর প্রতিটি শাখা এক ছাদের নিচে</p>
             </div>
-        </div>
-    </section>
 
-    <!-- ========== FOOTER ========== -->
-    <footer class="footer">
-        <div class="container">
-            <p>© ২০২৬ Kali Life. Healthy Kitchen & Organic Farming Project</p>
-            <p>Made with 💚 for a healthier tomorrow</p>
-        </div>
-    </footer>
+            <div class="services-grid">
 
-</body>
-</html>
+                <!-- Organic Products -->
+                <a href="products.html" class="service-card"
+                   style="background-image: url('https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=800&q=80');">
+                    <div class="service-body">
+                        <span class="service-pill active">🌿 সক্রিয়</span>
+                        <h3 class="service-title">অর্গানিক প্রোডাক্টস</h3>
+                        <p class="service-desc">ডিহাইড্রেটেড সবজি ও খাঁটি গুঁড়ো মশলা, সরাসরি ফার্ম থেকে।</p>
+                        <span class="service-link">প্রোডাক্টস দেখুন →</span>
+                    </div>
+                </a>
+
+                <!-- Factory Maintenance / AMC -->
+                <a href="amc.html" class="service-card"
+                   style="background-image: url('https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800&q=80');">
+                    <div class="service-body">
+                        <span class="service-pill active">🏭 সক্রিয়</span>
+                        <h3 class="service-title">ফ্যাক্টরি মেইনটেন্যান্স (AMC)</h3>
+                        <p class="service-desc">চা ফ্যাক্টরির মেশিনারি ও ইলেকট্রিক্যাল যন্ত্রপাতির অ্যানুয়াল মেইনটেন্যান্স কন্ট্রাক্ট ট্র্যাকিং — সুপারভাইজার ভেরিফিকেশনসহ সম্পূর্ণ সার্ভিস লগ।</p>
+                        <span class="service-link">প্যানেলে যান →</span>
+                    </div>
+                </a>
+
+                <!-- Tea Garden Maintenance - coming soon -->
+                <div class="service-card is-soon"
+                     style="background-image: url('https://images.unsplash.com/photo-1563822249366-71c743e8cd68?w=800&q=80');">
+                    <div class="service-body">
+                        <span class="service-pill soon">🍃 শীঘ্রই আসছে</span>
+                        <h3 class="service-title">চা বাগান মেইনটেন্যান্স</h3>
+                        <p class="service-desc">চা বাগানের সেচ, রক্ষণাবেক্ষণ ও পরিচর্যার সম্পূর্ণ ট্র্যাকিং সিস্টেম — শীঘ্রই যুক্ত হচ্ছে।</p>
+                    </div>
+                </div>
+
+                <!-- Astrology -->
+                <a href="astrology.html" class="service-card"
+                   style="background-image: url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=800&q=80');">
+                    <div class="service-body">
+                        <span class="service-pill active">🔮 সক্রিয়</span>
+                        <h3 class="service-title">Astrology Services</h3>
+                        <p class="service-desc">সঠিক জীবনের নির্দেশনা — Horoscope ও পরামর্শ সেবা।</p>
+                        <span class="service-link">Horoscope দেখুন →</span>
+                    </div>
+      
