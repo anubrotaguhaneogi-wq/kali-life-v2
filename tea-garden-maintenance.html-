@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>চা বাগান মেইনটেন্যান্স — Kali Life</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- ===================================================================
+  FIREBASE — এখানে তোমার Kali Life ecosystem-এর আসল Firebase config বসাও
+  (login.html / create-admin.html-এ যে config আছে, ঠিক সেটাই এখানে বসবে,
+  যাতে একই ইউজার/ডেটাবেস ব্যবহার হয়)
+=================================================================== -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getFirestore, collection, addDoc, getDocs, doc, updateDoc,
+    deleteDoc, query, orderBy, onSnapshot, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  // ⬇️ এই অবজেক্টটা বদলে তোমার আসল Firebase config বসাও
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "kali-life-ecosystem.firebaseapp.com",
+    projectId: "kali-life-ecosystem",
+    storageBucket: "kali-life-ecosystem.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // দুটো কালেকশন:
+  // 1) teaGardenBlocks   -> বাগানের সেকশন/ব্লক (যেমন: Section A, Nursery, ইত্যাদি)
+  // 2) teaGardenActivities -> প্রতিটা কাজের লগ (সেচ/সার/কীটনাশক/প্রুনিং/সাধারণ)
+  const blocksCol = collection(db, "teaGardenBlocks");
+  const activitiesCol = collection(db, "teaGardenActivities");
+
+  // ---------- STATE ----------
+  let blocks = [];
+  let activities = [];
+  let activeFilter = "all";
+
+  const ACTIVITY_TYPES = {
+    irrigation: { label: "সেচ", color: "#4AC1E0" },
+    fertilizer: { label: "সার প্রয়োগ", color: "#8BD17C" },
+    pesticide:  { label: "কীটনাশক/স্প্রে", color: "#E0A24A" },
+    pruning:    { label: "প্রুনিং/ছাঁটাই", color: "#C084E0" },
+    general:    { label: "সাধারণ কাজ", color: "#9BB3A6" }
+  };
+
+  // ---------- DOM refs ----------
+  const blockSelect = document.getElementById("blockSelect");
+  const blockListEl = document.getElementById("blockList");
+  const activityListEl = document.getElementById("activityList");
+  const statBlocks = document.getElementById("statBlocks");
+  const statThisMonth = document.getElementById("statThisMonth");
+  const statDue = document.getElementById("statDue");
+
+  // ---------- BLOCK: add ----------
+  document.getElementById("blockForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const name = document.getElementById("blockName").value.trim();
+    const area = document.getElementById("blockArea").value.trim();
+    const note = document.getElementById("blockNote").value.trim();
+    if (!name) return;
+
+    await addDoc(blocksCol, {
+      name, area, note,
+      createdAt: serverTimestamp()
+    });
+    e.target.reset();
+  });
+
+  // ---------- BLOCK: delete ----------
+  window.deleteBlock = async (id) => {
+    if (!confirm("এই ব্লকটা মুছে ফেলতে চাও? এর সাথে যুক্ত কাজের লগ থাকবে কিন্তু ব্লক-নাম আর দেখাবে না।")) return;
+    await deleteDoc(doc(db, "teaGardenBlocks", id));
+  };
+
+  // ---------- ACTIVITY: add ----------
+  document.getElementById("activityForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const blockId = document.getElementById("blockSelect").value;
+    const type = document.getElementById("activityType").value;
+    const date = document.getElementById("activityDate").value;
+    const worker = document.getElementById("activityWorker").value.trim();
+    const details = document.getElementById("activityDetails").value.trim();
+    const cost = document.getElementById("activityCost").value.trim();
+    const nextDue = document.getElementById("activityNextDue").value;
+
+    if (!blockId || !type || !date) return;
+
+    await addDoc(activitiesCol, {
+      blockId, type, date, worker, details,
+      cost: cost ? Number(cost) : null,
+      nextDue: nextDue || null,
+      status: "done",
+      createdAt: serverTimestamp()
+    });
+    e.target.reset();
+  });
+
+  // ---------- ACTIVITY: delete ----------
+  window.deleteActivity = async (id) => {
+    if (!confirm("এই এন্ট্রিটা মুছে ফেলতে চাও?")) return;
+    await deleteDoc(doc(db, "teaGardenActivities", id));
+  };
+
+  // ---------- FILTER ----------
+  window.setFilter = (type) => {
+    activeFilter = type;
+    document.querySelectorAll(".filter-chip").forEach(el => {
+      el.classList.toggle("active", el.dataset.type === type);
+    });
+    renderActivities();
+  };
+
+  // ---------- RENDER: blocks ----------
+  function renderBlocks() {
+    blockListEl.innerHTML = "";
+    blockSelect.innerHTML = '<option value="">ব্লক বাছাই করো</option>';
+
+    if (blocks.length === 0) {
+      blockListEl.innerHTML = `<p class="empty">এখনো কোনো ব্লক/সেকশন যোগ করা হয়নি। উপরে ফর্ম দিয়ে প্রথম ব্লক যোগ করো।</p>`;
+    }
+
+    blocks.forEach(b => {
+      const li = document.createElement("div");
+      li.className = "block-chip";
+      li.innerHTML = `
+        <div>
+          <strong>${escapeHtml(b.name)}</strong>
+          ${b.area ? `<span class="muted"> · ${escapeHtml(b.area)}</span>` : ""}
+          ${b.note ? `<div class="muted small">${escapeHtml(b.note)}</div>` : ""}
+        </div>
+        <button class="icon-btn" onclick="deleteBlock('${b.id}')" title="মুছে ফেলো">✕</button>
+      `;
+      blockListEl.appendChild(li);
+
+      const opt = document.createElement("option");
+      opt.value = b.id;
+      opt.textContent = b.name;
+      blockSelect.appendChild(opt);
+    });
+
+    statBlocks.textContent = blocks.length;
+  }
+
+  // ---------- RENDER: activities ----------
+  function renderActivities() {
+    activityListEl.innerHTML = "";
+    const blockMap = Object.fromEntries(blocks.map(b => [b.id, b.name]));
+
+    const filtered = activeFilter === "all"
+      ? activities
+      : activities.filter(a => a.type === activeFilter);
+
+    if (filtered.length === 0) {
+      activityListEl.innerHTML = `<p class="empty">এই ফিল্টারে কোনো কাজের লগ নেই।</p>`;
+    }
+
+    filtered.forEach(a => {
+      const meta = ACTIVITY_TYPES[a.type] || ACTIVITY_TYPES.general;
+      const row = document.createElement("div");
+      row.className = "activity-row";
+      row.innerHTML = `
+        <div class="tag" style="background:${meta.color}22; color:${meta.color}; border-color:${meta.color}55;">
+          ${meta.label}
+        </div>
+        <div class="activity-main">
+          <div class="activity-top">
+            <strong>${escapeHtml(blockMap[a.blockId] || "অজানা ব্লক")}</strong>
+            <span class="muted">${a.date || ""}</span>
+          </div>
+          ${a.details ? `<div class="details">${escapeHtml(a.details)}</div>` : ""}
+          <div class="muted small">
+            ${a.worker ? `কাজ করেছে: ${escapeHtml(a.worker)}` : ""}
+            ${a.cost ? ` · খরচ: ₹${a.cost}` : ""}
+            ${a.nextDue ? ` · পরবর্তী তারিখ: ${a.nextDue}` : ""}
+          </div>
+        </div>
+        <button class="icon-btn" onclick="deleteActivity('${a.id}')" title="মুছে ফেলো">✕</button>
+      `;
+      activityListEl.appendChild(row);
+    });
+
+    // stats
+    const now = new Date();
+    const thisMonth = activities.filter(a => {
+      if (!a.date) return false;
+      const d = new Date(a.date);
+      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    }).length;
+    const dueSoon = activities.filter(a => {
+      if (!a.nextDue) return false;
+      const diff = (new Date(a.nextDue) - now) / (1000 * 60 * 60 * 24);
+      return diff >= 0 && diff <= 7;
+    }).length;
+    statThisMonth.textContent = thisMonth;
+    statDue.textContent = dueSoon;
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  // ---------- LIVE LISTENERS ----------
+  onSnapshot(query(blocksCol, orderBy("createdAt", "asc")), (snap) => {
+    blocks = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderBlocks();
+    renderActivities();
+  });
+
+  onSnapshot(query(activitiesCol, orderBy("date", "desc")), (snap) => {
+    activities = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderActivities();
+  });
+</script>
+
+<style>
+  :root {
+    --bg: #0A120D;
+    --panel: #10201A;
+    --panel-2: #142A21;
+    --line: #1E3A2E;
+    --text: #E8F3EC;
+    --muted: #7FA88F;
+    --accent: #4ADE80;
+    --accent-dim: #2FA85F;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Hind Siliguri', sans-serif;
+    line-height: 1.6;
+    padding-bottom: 60px;
+  }
+  header {
+    padding: 28px 20px 18px;
+    border-bottom: 1px solid var(--line);
+  }
+  header .eyebrow {
+    color: var(--accent);
+    font-size: 14px;
+    font-weight: 600;
+  }
+  header h1 {
+    margin: 4px 0 4px;
+    font-size: 26px;
+    font-weight: 700;
+  }
+  header p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 15px;
+  }
+  main {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 20px 16px;
+  }
+  .stats {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+  .stat-card {
+    flex: 1;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 14px 12px;
+    text-align: center;
+  }
+  .stat-card .num {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .stat-card .label {
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  section.card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 18px 16px;
+    margin-bottom: 18px;
+  }
+  section.card h2 {
+    font-size: 17px;
+    margin: 0 0 12px;
+    font-weight: 600;
+  }
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .row-2 {
+    display: flex;
+    gap: 10px;
+  }
+  .row-2 > * { flex: 1; min-width: 0; }
+  input, select, textarea {
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    color: var(--text);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-family: inherit;
+    font-size: 14.5px;
+    width: 100%;
+  }
+  textarea { resize: vertical; min-height: 54px; }
+  label {
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-bottom: -4px;
+  }
+  button.primary {
+    background: var(--accent);
+    color: #04170D;
+    border: none;
+    border-radius: 10px;
+    padding: 11px;
+    font-weight: 700;
+    font-size: 14.5px;
+    cursor: pointer;
+    margin-top: 4px;
+  }
+  button.primary:active { background: var(--accent-dim); }
+
+  .block-chip, .activity-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .block-chip:last-child, .activity-row:last-child { border-bottom: none; }
+  .icon-btn {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 15px;
+    cursor: pointer;
+    padding: 2px 6px;
+  }
+  .icon-btn:active { color: #E06A6A; }
+  .muted { color: var(--muted); }
+  .small { font-size: 12.5px; }
+  .empty { color: var(--muted); font-size: 14px; padding: 6px 0; }
+
+  .filters {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .filter-chip {
+    border: 1px solid var(--line);
+    background: var(--panel-2);
+    color: var(--muted);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .filter-chip.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: #4ADE8018;
+  }
+
+  .tag {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 8px;
+    border: 1px solid;
+    white-space: nowrap;
+    height: fit-content;
+  }
+  .activity-main { flex: 1; min-width: 0; }
+  .activity-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 14.5px;
+  }
+  .details { font-size: 14px; margin-top: 3px; }
+</style>
+</head>
+<body>
+
+  <header>
+    <div class="eyebrow">Kali Life · Smart Agriculture</div>
+    <h1>চা বাগান মেইনটেন্যান্স</h1>
+    <p>বাগানের ব্লক অনুযায়ী সেচ, সার, কীটনাশক, প্রুনিং ও অন্যান্য কাজের সম্পূর্ণ লগ।</p>
+  </header>
+
+  <main>
+
+    <div class="stats">
+      <div class="stat-card"><div class="num" id="statBlocks">0</div><div class="label">মোট ব্লক</div></div>
+      <div class="stat-card"><div class="num" id="statThisMonth">0</div><div class="label">এই মাসের এন্ট্রি</div></div>
+      <div class="stat-card"><div class="num" id="statDue">0</div><div class="label">৭ দিনে ডিউ</div></div>
+    </div>
+
+    <!-- ব্লক/সেকশন যোগ করা -->
+    <section class="card">
+      <h2>নতুন ব্লক/সেকশন যোগ করো</h2>
+      <form id="blockForm">
+        <div class="row-2">
+          <div>
+            <label>ব্লকের নাম</label>
+            <input id="blockName" placeholder="যেমন: সেকশন A, নার্সারি" required>
+          </div>
+          <div>
+            <label>এলাকা (ঐচ্ছিক)</label>
+            <input id="blockArea" placeholder="যেমন: ৫ বিঘা">
+          </div>
+        </div>
+        <div>
+          <label>নোট (ঐচ্ছিক)</label>
+          <input id="blockNote" placeholder="বাড়তি তথ্য">
+        </div>
+        <button class="primary" type="submit">ব্লক যোগ করো</button>
+      </form>
+    </section>
+
+    <!-- বিদ্যমান ব্লকের তালিকা -->
+    <section class="card">
+      <h2>ব্লক তালিকা</h2>
+      <div id="blockList"></div>
+    </section>
+
+    <!-- কাজের লগ যোগ করা -->
+    <section class="card">
+      <h2>কাজের এন্ট্রি যোগ করো</h2>
+      <form id="activityForm">
+        <div class="row-2">
+          <div>
+            <label>ব্লক</label>
+            <select id="blockSelect" required></select>
+          </div>
+          <div>
+            <label>কাজের ধরন</label>
+            <select id="activityType" required>
+              <option value="">বাছাই করো</option>
+              <option value="irrigation">সেচ</option>
+              <option value="fertilizer">সার প্রয়োগ</option>
+              <option value="pesticide">কীটনাশক/স্প্রে</option>
+              <option value="pruning">প্রুনিং/ছাঁটাই</option>
+              <option value="general">সাধারণ কাজ</option>
+            </select>
+          </div>
+        </div>
+        <div class="row-2">
+          <div>
+            <label>তারিখ</label>
+            <input id="activityDate" type="date" required>
+          </div>
+          <div>
+            <label>পরবর্তী ডিউ তারিখ (ঐচ্ছিক)</label>
+            <input id="activityNextDue" type="date">
+          </div>
+        </div>
+        <div>
+          <label>বিবরণ</label>
+          <textarea id="activityDetails" placeholder="কী কাজ হয়েছে বিস্তারিত লেখো"></textarea>
+        </div>
+        <div class="row-2">
+          <div>
+            <label>কাজ করেছে (ঐচ্ছিক)</label>
+            <input id="activityWorker" placeholder="শ্রমিক/সুপারভাইজারের নাম">
+          </div>
+          <div>
+            <label>খরচ ₹ (ঐচ্ছিক)</label>
+            <input id="activityCost" type="number" placeholder="0">
+          </div>
+        </div>
+        <button class="primary" type="submit">এন্ট্রি সেভ করো</button>
+      </form>
+    </section>
+
+    <!-- কাজের লগ তালিকা -->
+    <section class="card">
+      <h2>কাজের হিস্ট্রি</h2>
+      <div class="filters">
+        <div class="filter-chip active" data-type="all" onclick="setFilter('all')">সব</div>
+        <div class="filter-chip" data-type="irrigation" onclick="setFilter('irrigation')">সেচ</div>
+        <div class="filter-chip" data-type="fertilizer" onclick="setFilter('fertilizer')">সার</div>
+        <div class="filter-chip" data-type="pesticide" onclick="setFilter('pesticide')">কীটনাশক</div>
+        <div class="filter-chip" data-type="pruning" onclick="setFilter('pruning')">প্রুনিং</div>
+        <div class="filter-chip" data-type="general" onclick="setFilter('general')">সাধারণ</div>
+      </div>
+      <div id="activityList"></div>
+    </section>
+
+  </main>
+
+</body>
+          </html>
+          
